@@ -11,6 +11,7 @@ namespace Pool_Game
         private float xPos, yPos;
         private float xSpeed, ySpeed;
         private float radius;
+        private float mass = 15;
         
 
         public Ball(float x,float y,float xS,float yS, float r)
@@ -26,27 +27,48 @@ namespace Pool_Game
             xPos = xPos + xSpeed;
             yPos = yPos + ySpeed;
 
-            if (xPos > RightWall)//too far right
+            if (xPos > RightWall -radius)//too far right
             {
-                xPos = RightWall;
+                xPos = RightWall - radius;
                 xSpeed = -xSpeed;
             }
-            if (yPos > BotWall)//too far down
+            if (yPos > BotWall - radius)//too far down
             {
-                yPos = BotWall;
+                yPos = BotWall - radius;
                 ySpeed = -ySpeed;
             }
-            if (xPos < TopWall)//too far up
+            if (xPos < TopWall +radius)//too far up
             {
-                xPos = TopWall;
+                xPos = TopWall + radius;
                 xSpeed = -xSpeed;
             }
-            if (yPos < LeftWall)//too far left
+            if (yPos < LeftWall +radius)//too far left
             {
-                yPos = LeftWall;
+                yPos = LeftWall + radius;
                 ySpeed = -ySpeed;
             }
         }
+        public bool checkCollision(Ball otherBall)
+        {
+            float xDist = xPos - otherBall.getX();
+            float yDist = yPos - otherBall.getY();
+
+            float radDist = radius + otherBall.getRadius();
+
+            double distSqr = Math.Sqrt((double)xDist * (double)xDist + (double)yDist * (double)yDist);
+
+            if (distSqr <= (double)radDist)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+
+
         public float getX()
         {
             return xPos;
