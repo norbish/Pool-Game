@@ -8,11 +8,11 @@ namespace Pool_Game
 {
     class Ball
     {
-        private float xPos, yPos;
+        public float xPos, yPos;
         private float xSpeed, ySpeed;
         private float radius;
-        private float mass = 15;
-        
+        private float mass = 0.15F;
+        private float xDist, yDist;
 
         public Ball(float x,float y,float xS,float yS, float r)
         {
@@ -50,14 +50,14 @@ namespace Pool_Game
         }
         public bool checkCollision(Ball otherBall)
         {
-            float xDist = xPos - otherBall.getX();
-            float yDist = yPos - otherBall.getY();
+            xDist = xPos - otherBall.getX();//dx
+            yDist = yPos - otherBall.getY();//dy
 
             float radDist = radius + otherBall.getRadius();
 
-            double distSqr = Math.Sqrt((double)xDist * (double)xDist + (double)yDist * (double)yDist);
+            
 
-            if (distSqr <= (double)radDist)
+            if (radDist * radDist >= (xDist * xDist + yDist * yDist)) //check if distance is bigger than the balls touching range
             {
                 return true;
             }
@@ -65,6 +65,35 @@ namespace Pool_Game
             {
                 return false;
             }
+        }
+
+        public void calculateCollision(Ball otherBall)//this should not run on next frame, or balls will return. 
+        {
+            double collisionTangent = Math.Atan2((double)yDist, (double)xDist); //returns the angle of the tangent of the vector which is the collision x and y distance.
+            double sin = Math.Sin(collisionTangent);
+            double cos = Math.Cos(collisionTangent);
+
+            //old velocity
+            double V0Ball1x = xSpeed * cos;
+            double V0Ball1y = ySpeed * sin;
+            double V0Ball2x = otherBall.getXspeed() * cos;
+            double V0Ball2y = otherBall.getYspeed() * sin;
+
+            //new velocity
+            double V1Ball1x = ((mass - otherBall.getMass()) / (mass + otherBall.getMass())) * V0Ball1x + (2 * otherBall.getMass() / (mass + otherBall.getMass())) * V0Ball2x;
+            double V1Ball1y = (2 * mass / (mass + otherBall.getMass())) * V0Ball1x + ((otherBall.getMass() - mass) / (otherBall.getMass() + mass)) * V0Ball2x;
+            double V1Ball2x = V0Ball1y;
+            double V1Ball2y = V0Ball2y;
+
+            //set new velocity
+            xSpeed = (float)V1Ball1x;
+            ySpeed = (float)V1Ball1y;
+            xPos += xSpeed *3;
+            yPos += ySpeed *3;
+            otherBall.setXspeed((float)V1Ball2x);
+            otherBall.setYspeed((float)V1Ball2y);
+            otherBall.xPos += otherBall.xSpeed *3;
+            otherBall.yPos += otherBall.ySpeed *3;
         }
 
 
@@ -88,6 +117,19 @@ namespace Pool_Game
         public float getRadius()
         {
             return radius;
+        }
+        public float getMass()
+        {
+            return mass;
+        }
+
+        public void setXspeed(float xSp)
+        {
+            xSpeed = xSp;
+        }
+        public void setYspeed(float ySp)
+        {
+            ySpeed = ySp;
         }
     }
 }
