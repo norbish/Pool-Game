@@ -18,8 +18,8 @@ namespace Pool_Game
         private float leftWall = 0;
         private float rightWall = 300;//x
 
-        float ballspeed = 5F;
-        float radius =10F;
+        float ballspeed = 1F;
+        float radius =5F;
 
         Ball[] Ballz = new Ball[5];
 
@@ -54,8 +54,9 @@ namespace Pool_Game
             {
                 Ballz[b].UpdateVars(topWall, botWall, leftWall, rightWall);
             
-            checkCollision();
+           
             }
+            checkCollision();
             drawBalls();//can be put inside for loop for 1 ball move at a time.
             
 
@@ -104,7 +105,7 @@ namespace Pool_Game
         public void InitializeBallz()
         {
             Ballz[0] = new Ball(1, 1, ballspeed, ballspeed, radius);//xPos, yPos, xSpeed,  ySpeed, radius,
-            Ballz[1] = new Ball(150, 350, ballspeed, ballspeed, radius);
+            Ballz[1] = new Ball(100, 10, ballspeed, ballspeed, radius);
             Ballz[2] = new Ball(80, 100, ballspeed, ballspeed, radius);
             Ballz[3] = new Ball(200, 50, ballspeed, ballspeed, radius);
             Ballz[4] = new Ball(200, 150, ballspeed, ballspeed, radius);
