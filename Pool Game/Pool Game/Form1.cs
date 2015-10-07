@@ -19,10 +19,10 @@ namespace Pool_Game
         private static float rightWall = 1000;//x
         private static float padMidPos = rightWall / 2;
         private static float padPosy = 550;
-        float ballspeed = 3F;
+        public float ballspeed = 3F;
         float radius =10F;
         
-        Ball[] Ballz = new Ball[5];
+        Ball[] Ballz = new Ball[2];
 
         Paddle pad = new Paddle(padMidPos, padPosy, leftWall, rightWall);
 
@@ -75,16 +75,17 @@ namespace Pool_Game
             {
                 Ballz[b].UpdateVars(topWall, botWall, leftWall, rightWall);
 
-                drawBalls();//can be put inside for loop for 1 ball move at a time.
-                checkCollision();
+                
+                
             }
-            
-           
+            drawBalls();
+           checkCollision();//if this is inside loop, code doesnt work with less than 5 balls. idk why not
         }
         public void checkCollision()
         {
             for (int i = 0; i < Ballz.Length; i++)
             {
+                Ballz[i].checkPadCollision(pad, ballspeed);
                 //collide with bot pad
                 for (int j = i+1; j < Ballz.Length; j++)
                 {
@@ -108,13 +109,18 @@ namespace Pool_Game
                 {
                     case 0: drawing.FillEllipse(Brushes.Black, Ballz[b].getX() - Ballz[b].getRadius(), Ballz[b].getY() - Ballz[b].getRadius(), Ballz[b].getRadius() * 2, Ballz[b].getRadius() * 2); break;
                     case 1: drawing.FillEllipse(Brushes.Blue, Ballz[b].getX() - Ballz[b].getRadius(), Ballz[b].getY() - Ballz[b].getRadius(), Ballz[b].getRadius() * 2, Ballz[b].getRadius() * 2); break;
-                    case 2: drawing.FillEllipse(Brushes.Yellow, Ballz[b].getX() - Ballz[b].getRadius(), Ballz[b].getY() - Ballz[b].getRadius(), Ballz[b].getRadius() * 2, Ballz[b].getRadius() * 2); break;
-                    case 3: drawing.FillEllipse(Brushes.Red, Ballz[b].getX() - Ballz[b].getRadius(), Ballz[b].getY() - Ballz[b].getRadius(), Ballz[b].getRadius() * 2, Ballz[b].getRadius() * 2); break;
-                    case 4: drawing.FillEllipse(Brushes.Green, Ballz[b].getX() - Ballz[b].getRadius(), Ballz[b].getY() - Ballz[b].getRadius(), Ballz[b].getRadius() * 2, Ballz[b].getRadius() * 2); break;
+                    //case 2: drawing.FillEllipse(Brushes.Yellow, Ballz[b].getX() - Ballz[b].getRadius(), Ballz[b].getY() - Ballz[b].getRadius(), Ballz[b].getRadius() * 2, Ballz[b].getRadius() * 2); break;
+                    //case 3: drawing.FillEllipse(Brushes.Red, Ballz[b].getX() - Ballz[b].getRadius(), Ballz[b].getY() - Ballz[b].getRadius(), Ballz[b].getRadius() * 2, Ballz[b].getRadius() * 2); break;
+                    //case 4: drawing.FillEllipse(Brushes.Green, Ballz[b].getX() - Ballz[b].getRadius(), Ballz[b].getY() - Ballz[b].getRadius(), Ballz[b].getRadius() * 2, Ballz[b].getRadius() * 2); break;
                 }
             //draw pad
-            drawing.FillRectangle(Brushes.Gray, pad.getX(), padPosy, pad.getWidth(), 15);//height = 5 
-                
+            //drawing.FillRectangle(Brushes.Gray, pad.getX() - pad.getWidth() / 2, padPosy, pad.getWidth(), 15);//height = 5 
+
+
+            drawing.FillRectangle(Brushes.Red, pad.getLL(), padPosy, pad.getWidth()/4, 15);//height = 5 
+            drawing.FillRectangle(Brushes.Yellow, pad.getML(), padPosy, pad.getWidth()/2, 15);//height = 5 REAL POSITION
+            drawing.FillRectangle(Brushes.Blue, pad.getMR()     , padPosy, pad.getWidth()/4, 15);//height = 5 
+
         }
 
         
@@ -123,11 +129,11 @@ namespace Pool_Game
 
         public void InitializeBallz()
         {
-            Ballz[0] = new Ball(1, 1, ballspeed, ballspeed, radius);//xPos, yPos, xSpeed,  ySpeed, radius,
-            Ballz[1] = new Ball(100, 10, ballspeed, ballspeed, radius);
-            Ballz[2] = new Ball(140, 100, ballspeed, ballspeed, radius);
-            Ballz[3] = new Ball(200, 50, ballspeed, ballspeed, radius);
-            Ballz[4] = new Ball(200, 150, ballspeed, ballspeed, radius);
+            Ballz[0] = new Ball(pad.getLL()-40, padPosy -60, ballspeed, ballspeed, radius);//xPos, yPos, xSpeed,  ySpeed, radius,
+            Ballz[1] = new Ball(pad.getML(), padPosy -60, ballspeed, ballspeed, radius);
+            //Ballz[2] = new Ball(140, 100, ballspeed, ballspeed, radius);
+            //Ballz[3] = new Ball(200, 50, ballspeed, ballspeed, radius);
+            //Ballz[4] = new Ball(200, 150, ballspeed, ballspeed, radius);
         }
         public void InitializeGUI()
         {

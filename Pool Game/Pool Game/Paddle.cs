@@ -10,9 +10,9 @@ namespace Pool_Game
     {
         // 3 "blocks" decide outcome of ball.
         // block far left: if movement is positive, force ball upwards. if negative, increase angle. 
-        private float leftEndL, leftEndR;//left end of pad
+        private float leftEndL;//left end of pad
         private float middleL, middleR;
-        private float rightEndL, rightEndR;//right end of pad
+        private float rightEndR;//right end of pad
         private float width;
         private float xPos, yPos;
         private float movespeed = 10;
@@ -22,7 +22,7 @@ namespace Pool_Game
         {
             xPos = x; yPos = y;
             updatePoints(x);
-            width = x+50;//width is the length of the x value. RR is the point to the furthest right
+            width = 100;//width is the length of the x value. RR is the point to the furthest right
 
         }
        
@@ -35,10 +35,10 @@ namespace Pool_Game
         public void updatePoints(float x)//so i dont have to change them in updateVars and Paddle.
         {
             leftEndL = x - 50;
-            leftEndR = x - 30;
-            middleL = x - 10;
-            middleR = x + 10;
-            rightEndL = x + 30;
+            //leftEndR = x - 30;//remove
+            middleL = x - 25;
+            middleR = x + 25;
+            //rightEndL = x + 30;//remove
             rightEndR = x + 50;
         }
 
@@ -59,10 +59,6 @@ namespace Pool_Game
         {
             return leftEndL;
         }
-        public float getLR()
-        {
-            return leftEndR;
-        }
         public float getML()
         {
             return middleL;
@@ -70,10 +66,6 @@ namespace Pool_Game
         public float getMR()
         {
             return middleR;
-        }
-        public float getRL()
-        {
-            return rightEndL;
         }
         public float getRR()
         {

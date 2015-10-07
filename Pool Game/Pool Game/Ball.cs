@@ -50,20 +50,29 @@ namespace Pool_Game
             }
         }
         //check pad colliding with ball
-        public bool checkPadCollision(Paddle pad)//maybe not bool. maybe just void.
-        {
-            if (xPos + radius >= pad.getLL() || xPos + radius < pad.getLR() && yPos + radius <= pad.getY() )
-            {
-                //might have to check what direction ball is heading in an if statement, or just change x speed to always be left.
-                //bounce left, handle in this area. xSpeed =... etc.
-                //maybe bounce extra to the left here, and less in the next one:
+        public void checkPadCollision(Paddle pad, float iSpeed)//maybe not bool. maybe just void.
+        {                                 //ball in yAxis inside pad                                                              //ball in xAxis  between points
+            if ( (yPos + radius >= pad.getY() - 7.5F && yPos + radius <= pad.getY() + 7.5F) && (xPos + radius >= pad.getLL() && xPos + radius < pad.getML())  )//if left area
+            {//bounce back or up(goes back if hit on the side because of xSpeed changed to 0, and next frame still in same "x" of area, so goes back.
+                xSpeed = xSpeed > 0 ?  0 :  - iSpeed;
+                ySpeed = -ySpeed;
             }
-            else if(xPos + radius >= pad.getLR() || xPos + radius < pad.getML() && yPos + radius <= pad.getY() )
-            {
-                //bounce back like a wall, just opposite way
+            else if((yPos + radius >= pad.getY() - 7.5F && yPos + radius <= pad.getY() + 7.5F) && (xPos + radius >= pad.getML() && xPos - radius <= pad.getMR()))
+            {//bounce
+                
+                ySpeed = -ySpeed;
             }
-            return true;
+            else if((yPos + radius >= pad.getY() - 7.5F && yPos + radius <= pad.getY() + 7.5F) && (xPos - radius > pad.getMR() && xPos - radius <= pad.getRR()))
+            {//bounce back or up
+                xSpeed = xSpeed < 0 ? 0 : iSpeed;
+                ySpeed = -ySpeed;
+            }
+           
+            
         }
+
+        
+
         public bool checkCollision(Ball otherBall)
         {
             
