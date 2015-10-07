@@ -18,8 +18,8 @@ namespace Pool_Game
         private float leftWall = 0;
         private float rightWall = 300;//x
 
-        float ballspeed = 1F;
-        float radius =5F;
+        float ballspeed = 2F;
+        float radius =10F;
 
         Ball[] Ballz = new Ball[5];
 
@@ -37,7 +37,7 @@ namespace Pool_Game
             InitializeBallz();//add the balls
 
             Timer Timer1 = new Timer();//create timer
-            Timer1.Interval = 10;
+            Timer1.Interval = 20;
             Timer1.Enabled = true;
             Timer1.Start();
             Timer1.Tick += new EventHandler(FixedUpdate);//make timer time.
@@ -53,11 +53,11 @@ namespace Pool_Game
             for (int b = 0; b < Ballz.Length; b++)
             {
                 Ballz[b].UpdateVars(topWall, botWall, leftWall, rightWall);
+             drawBalls();//can be put inside for loop for 1 ball move at a time.
+           checkCollision();
+            }
             
            
-            }
-            checkCollision();
-            drawBalls();//can be put inside for loop for 1 ball move at a time.
             
 
         }
@@ -82,6 +82,7 @@ namespace Pool_Game
         {
             for (int i = 0; i < Ballz.Length; i++)
             {
+                //collide with bot pad
                 for (int j = i+1; j < Ballz.Length; j++)
                 {
                     if (Ballz[i].checkCollision(Ballz[j]))
@@ -106,7 +107,7 @@ namespace Pool_Game
         {
             Ballz[0] = new Ball(1, 1, ballspeed, ballspeed, radius);//xPos, yPos, xSpeed,  ySpeed, radius,
             Ballz[1] = new Ball(100, 10, ballspeed, ballspeed, radius);
-            Ballz[2] = new Ball(80, 100, ballspeed, ballspeed, radius);
+            Ballz[2] = new Ball(140, 100, ballspeed, ballspeed, radius);
             Ballz[3] = new Ball(200, 50, ballspeed, ballspeed, radius);
             Ballz[4] = new Ball(200, 150, ballspeed, ballspeed, radius);
         }
