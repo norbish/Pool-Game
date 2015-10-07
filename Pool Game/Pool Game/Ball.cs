@@ -13,7 +13,7 @@ namespace Pool_Game
         private float radius;
         private float mass = 0.15F;
         private float xDist, yDist;
-        private bool JustTouched = false;
+        
 
         public Ball(float x,float y,float xS,float yS, float r)
         {
@@ -49,6 +49,21 @@ namespace Pool_Game
                 ySpeed = -ySpeed;
             }
         }
+        //check pad colliding with ball
+        public bool checkPadCollision(Paddle pad)//maybe not bool. maybe just void.
+        {
+            if (xPos + radius >= pad.getLL() || xPos + radius < pad.getLR() && yPos + radius <= pad.getY() )
+            {
+                //might have to check what direction ball is heading in an if statement, or just change x speed to always be left.
+                //bounce left, handle in this area. xSpeed =... etc.
+                //maybe bounce extra to the left here, and less in the next one:
+            }
+            else if(xPos + radius >= pad.getLR() || xPos + radius < pad.getML() && yPos + radius <= pad.getY() )
+            {
+                //bounce back like a wall, just opposite way
+            }
+            return true;
+        }
         public bool checkCollision(Ball otherBall)
         {
             
@@ -59,21 +74,15 @@ namespace Pool_Game
 
             
 
-            if (radDist * radDist >= (xDist * xDist + yDist * yDist) /*&& JustTouched == false*/) //check if distance is bigger than the balls touching range
+            if (radDist * radDist >= (xDist * xDist + yDist * yDist)) //check if distance is bigger than the balls touching range
             {
-                //JustTouched = true;
+                
                 return true;
-
             }
             else
             {
-                //JustTouched = false;
                 return false;
             }
-        }
-        public void rotate(float x, float y, float sin, float cos, bool reverse)
-        {
-
         }
 
         public void calculateCollision(Ball otherBall)//this should not run on next frame, or balls will return. 

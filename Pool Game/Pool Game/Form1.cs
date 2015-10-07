@@ -14,21 +14,22 @@ namespace Pool_Game
     public partial class Form1 : Form
     {
         private float topWall = 0;
-        private float botWall = 400;//y
-        private float leftWall = 0;
-        private float rightWall = 300;//x
-
-        float ballspeed = 2F;
+        private float botWall = 600;//y
+        private static float leftWall = 0;
+        private static float rightWall = 1000;//x
+        private static float padMidPos = rightWall / 2;
+        private static float padPosy = 550;
+        float ballspeed = 3F;
         float radius =10F;
-
+        
         Ball[] Ballz = new Ball[5];
 
-        Panel Canvas = new Panel();
-        Label label = new Label();
-        Label label2 = new Label();
-        Label label3 = new Label();
-        Label label4 = new Label();
-        Label label5 = new Label();
+        Paddle pad = new Paddle(padMidPos, padPosy, leftWall, rightWall);
+
+        static Panel Canvas = new Panel();
+
+        
+        
 
         public Form1()
         {
@@ -48,18 +49,55 @@ namespace Pool_Game
         {
 
         }
+        //move paddle
+        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+        {
+            if(keyData == Keys.Left && keyData == Keys.Right)
+            {
+                return true;
+            }
+            else if (keyData == Keys.Left)
+            {
+                pad.updateVars(false);
+                return true;
+            }
+            else if(keyData == Keys.Right)
+            {
+                pad.updateVars(true);
+                return true;
+            }
+            return base.ProcessCmdKey(ref msg, keyData);
+        }
+
         public void FixedUpdate(object sender, EventArgs e)
         {
             for (int b = 0; b < Ballz.Length; b++)
             {
                 Ballz[b].UpdateVars(topWall, botWall, leftWall, rightWall);
-             drawBalls();//can be put inside for loop for 1 ball move at a time.
-           checkCollision();
+
+                drawBalls();//can be put inside for loop for 1 ball move at a time.
+                checkCollision();
             }
             
            
-            
-
+        }
+        public void checkCollision()
+        {
+            for (int i = 0; i < Ballz.Length; i++)
+            {
+                //collide with bot pad
+                for (int j = i+1; j < Ballz.Length; j++)
+                {
+                    if (Ballz[i].checkCollision(Ballz[j]))
+                    {
+                        Ballz[i].calculateCollision(Ballz[j]);
+                        
+                    }
+                    //else
+                         //label.Text = "no collision";
+                         
+                }
+            }
         }
         public void drawBalls()
         {
@@ -74,32 +112,12 @@ namespace Pool_Game
                     case 3: drawing.FillEllipse(Brushes.Red, Ballz[b].getX() - Ballz[b].getRadius(), Ballz[b].getY() - Ballz[b].getRadius(), Ballz[b].getRadius() * 2, Ballz[b].getRadius() * 2); break;
                     case 4: drawing.FillEllipse(Brushes.Green, Ballz[b].getX() - Ballz[b].getRadius(), Ballz[b].getY() - Ballz[b].getRadius(), Ballz[b].getRadius() * 2, Ballz[b].getRadius() * 2); break;
                 }
-                //drawing.FillEllipse(Brushes.Black, Ballz[b].getX() - Ballz[b].getRadius(), Ballz[b].getY() - Ballz[b].getRadius(), Ballz[b].getRadius()*2, Ballz[b].getRadius()*2);
-            //(color, xPos, yPos, Width, Height)
+            //draw pad
+            drawing.FillRectangle(Brushes.Gray, pad.getX(), padPosy, pad.getWidth(), 15);//height = 5 
+                
         }
 
-        public void checkCollision()
-        {
-            for (int i = 0; i < Ballz.Length; i++)
-            {
-                //collide with bot pad
-                for (int j = i+1; j < Ballz.Length; j++)
-                {
-                    if (Ballz[i].checkCollision(Ballz[j]))
-                    {
-                        Ballz[i].calculateCollision(Ballz[j]);
-                        if(i==0)label.Text = "Collision!!!!";//det funker, men må lage en label for hver ball for å sjekke.
-                        if(i == 1)label2.Text = "Collision!!!!";
-                        if(i == 2)label3.Text = "Collision!!!!";
-                        if(i == 3)label4.Text = "Collision!!!!";
-                        if(i == 4)label5.Text = "Collision!!!!";
-                    }
-                    //else
-                         //label.Text = "no collision";
-                         
-                }
-            }
-        }
+        
 
 
 
@@ -119,47 +137,12 @@ namespace Pool_Game
             Canvas.Width = (int)rightWall;
             Canvas.BorderStyle = BorderStyle.FixedSingle;
 
-            //labels to check collision
-            label.Top = 0;
-            label.Left = 500;
-            label.Height = 20;
-            label.Width = 100;
-            label.Text = "no collision";
 
-            label2.Top = 20;
-            label2.Left = 500;
-            label2.Height = 20;
-            label2.Width = 100;
-            label2.Text = "no collision";
-
-            label3.Top = 40;
-            label3.Left = 500;
-            label3.Height = 20;
-            label3.Width = 100;
-            label3.Text = "no collision";
-
-            label4.Top = 60;
-            label4.Left = 500;
-            label4.Height = 20;
-            label4.Width = 100;
-            label4.Text = "no collision";
-
-            label5.Top = 80;
-            label5.Left = 500;
-            label5.Height = 20;
-            label5.Width = 100;
-            label5.Text = "no collision";
 
 
 
 
             this.Controls.Add(Canvas);
-
-            this.Controls.Add(label);
-            this.Controls.Add(label2);
-            this.Controls.Add(label3);
-            this.Controls.Add(label4);
-            this.Controls.Add(label5);
         }
     }
 }
