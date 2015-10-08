@@ -23,22 +23,23 @@ namespace Pool_Game
             ySpeed = yS;
             radius = r;
         }
-        public void UpdateVars(float TopWall, float BotWall,float LeftWall, float RightWall)//updates ball's position 
+        public void UpdateVars(float TopWall, float BotWall,float LeftWall, float RightWall, float padPosy)//updates ball's position 
         {
             xPos = xPos + xSpeed;
             yPos = yPos + ySpeed;
-
             if (xPos > RightWall -radius)//too far right
             {
                 xPos = RightWall - radius;
                 xSpeed = -xSpeed;
             }
-            if (yPos > BotWall - radius)//too far down
+            if (yPos >= BotWall - radius-2 )//too far down
             {
                 yPos = BotWall - radius;
-                ySpeed = -ySpeed;
+                ySpeed = 0; xSpeed = 5;
+                if (xSpeed <= 0)
+                    xSpeed = 0;
             }
-            if (xPos < TopWall +radius)//too far up
+            if (xPos <= TopWall +radius+2)//too far up
             {
                 xPos = TopWall + radius;
                 xSpeed = -xSpeed;
@@ -55,7 +56,7 @@ namespace Pool_Game
             if ( (yPos + radius >= pad.getY() - 7.5F && yPos + radius <= pad.getY() + 7.5F) && (xPos + radius >= pad.getLL() && xPos + radius < pad.getML())  )//if left area
             {//bounce back or up(goes back if hit on the side because of xSpeed changed to 0, and next frame still in same "x" of area, so goes back.
                 xSpeed = xSpeed > 0 ?  0 :  - iSpeed;
-                ySpeed = -ySpeed;
+                ySpeed = -iSpeed;
             }
             else if((yPos + radius >= pad.getY() - 7.5F && yPos + radius <= pad.getY() + 7.5F) && (xPos + radius >= pad.getML() && xPos - radius <= pad.getMR()))
             {//bounce
@@ -65,27 +66,56 @@ namespace Pool_Game
             else if((yPos + radius >= pad.getY() - 7.5F && yPos + radius <= pad.getY() + 7.5F) && (xPos - radius > pad.getMR() && xPos - radius <= pad.getRR()))
             {//bounce back or up
                 xSpeed = xSpeed < 0 ? 0 : iSpeed;
-                ySpeed = -ySpeed;
-            }
-           
-            
+                ySpeed = -iSpeed;
+            }   
         }
-
+        //brick collision
+        public bool checkBrickCollision(Brick b, float iSpeed, bool isAlive)//might need to make to string
+        {
+            if (isAlive == true)
+            {
+                if (yPos + radius >= b.top && yPos + radius <= b.top + 5 && xPos >= b.left && xPos <= b.right)//first brick fucked. why
+                {
+                    ySpeed = -iSpeed;
+                    return true;
+                }
+                if (yPos - radius <= b.bot + 5 && yPos - radius >= b.bot && xPos >= b.left && xPos <= b.right)
+                {
+                    ySpeed = iSpeed;
+                    return true;
+                }
+                if (yPos >= b.top && yPos <= b.bot && xPos + radius >= b.left && xPos + radius <= b.left + 5)
+                {
+                    xSpeed = -iSpeed;
+                    return true;
+                }
+                if (yPos >= b.top && yPos <= b.bot && xPos - radius >= b.right + 5 && xPos - radius <= b.left)
+                {
+                    xSpeed = iSpeed;
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                return false;
+            }
+        }
         
-
-        public bool checkCollision(Ball otherBall)
+        //check if balls collide
+        public bool checkBallCollision(Ball otherBall)
         {
             
             xDist = otherBall.getX()-xPos;//dx
             yDist = otherBall.getY()-yPos;//dy
 
             float radDist = radius + otherBall.getRadius();
-
             
-
             if (radDist * radDist >= (xDist * xDist + yDist * yDist)) //check if distance is bigger than the balls touching range
             {
-                
                 return true;
             }
             else
@@ -93,14 +123,14 @@ namespace Pool_Game
                 return false;
             }
         }
-
-        public void calculateCollision(Ball otherBall)//this should not run on next frame, or balls will return. 
+        //calculate the ball angle and velocity, and execute.
+        public void calculateBallCollision(Ball otherBall)//this should not run on next frame, or balls will return. 
         {
             double collisionTangent = Math.Atan2((double)yDist, (double)xDist); //returns the angle of the tangent of the vector which is the collision x and y distance.
             double sin = Math.Sin(collisionTangent);
             double cos = Math.Cos(collisionTangent);
             //rotate ball 0
-            double B0x = 0;//eller xPos?
+            double B0x = 0;
             double B0y = 0;
             //rotate ball 1
             double B1x = xDist * cos + yDist * sin;

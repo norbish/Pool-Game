@@ -1,0 +1,51 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Pool_Game
+{
+    class Brick
+    {
+        private float xPos, yPos, height, width;
+        public bool isAlive;
+        public float top, bot, left, right;
+        private String brickType;//kanskje int istedenfor?
+
+        public Brick(float xPos, float yPos, float height,float width, String brickType, bool isAlive)
+        {
+            this.xPos = xPos;
+            this.yPos = yPos;
+            this.height = height;
+            this.width = width;
+            this.brickType = brickType;
+            this.isAlive = isAlive;
+
+            top = yPos - height / 2;
+            bot = yPos + height / 2;
+            left = xPos - width / 2;
+            right = xPos + width / 2;
+            
+        }
+
+        public float getX()
+        {
+            return xPos;
+        }
+        public float getY()
+        {
+            return yPos;
+        }
+        public float getHeight()
+        {
+            return height;
+        }
+        public float getWidth()
+        {
+            return width;
+        }
+        
+
+    }
+}
