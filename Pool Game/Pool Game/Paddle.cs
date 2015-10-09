@@ -17,13 +17,14 @@ namespace Pool_Game
         private float xPos, yPos;
         private float movespeed = 10;
         private float leftWall, rightWall;
+        private float height;
 
-        public Paddle(float x, float y, float leftWall, float rightWall)
+        public Paddle(float x, float y, float leftWall, float rightWall, float height)
         {
             xPos = x; yPos = y;
             updatePoints(x);
             width = 100;//width is the length of the x value. RR is the point to the furthest right
-
+            this.height = height;
         }
        
         public void updateVars(bool moveRight)
@@ -70,6 +71,10 @@ namespace Pool_Game
         public float getRR()
         {
             return rightEndR;
+        }
+        public float getHeight()
+        {
+            return height;
         }
     }
 }

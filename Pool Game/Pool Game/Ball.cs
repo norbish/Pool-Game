@@ -13,16 +13,18 @@ namespace Pool_Game
         private float radius;
         private float mass = 0.15F;
         private float xDist, yDist;
-        
+        public bool inPlay = false;
 
-        public Ball(float x,float y,float xS,float yS, float r)
+        public Ball(float x,float y,float xS,float yS, float r, bool inPlay)
         {
             xPos = x;
             yPos = y;
             xSpeed = xS;
             ySpeed = yS;
             radius = r;
+            this.inPlay = inPlay;
         }
+        //collision with wall and speeds
         public void UpdateVars(float TopWall, float BotWall,float LeftWall, float RightWall, float padPosy)//updates ball's position 
         {
             xPos = xPos + xSpeed;
@@ -32,38 +34,39 @@ namespace Pool_Game
                 xPos = RightWall - radius;
                 xSpeed = -xSpeed;
             }
-            if (yPos >= BotWall - radius-2 )//too far down
+            if (yPos >= BotWall - radius )//too far down
             {
                 yPos = BotWall - radius;
                 ySpeed = 0; xSpeed = 5;
+                inPlay = false;
                 if (xSpeed <= 0)
                     xSpeed = 0;
             }
-            if (xPos <= TopWall +radius+2)//too far up
+            if (yPos <= TopWall +radius)//too far up
             {
-                xPos = TopWall + radius;
-                xSpeed = -xSpeed;
-            }
-            if (yPos < LeftWall +radius)//too far left
-            {
-                yPos = LeftWall + radius;
+                yPos = TopWall + radius;
                 ySpeed = -ySpeed;
+            }
+            if (xPos < LeftWall +radius)//too far left
+            {
+                xPos = LeftWall + radius;
+                xSpeed = -xSpeed;
             }
         }
         //check pad colliding with ball
         public void checkPadCollision(Paddle pad, float iSpeed)//maybe not bool. maybe just void.
         {                                 //ball in yAxis inside pad                                                              //ball in xAxis  between points
-            if ( (yPos + radius >= pad.getY() - 7.5F && yPos + radius <= pad.getY() + 7.5F) && (xPos + radius >= pad.getLL() && xPos + radius < pad.getML())  )//if left area
+            if ((yPos + radius >= pad.getY() - pad.getHeight()/2 && yPos + radius <= pad.getY() + pad.getHeight()/2) && (xPos + radius >= pad.getLL() && xPos + radius < pad.getML()))//if left area
             {//bounce back or up(goes back if hit on the side because of xSpeed changed to 0, and next frame still in same "x" of area, so goes back.
-                xSpeed = xSpeed > 0 ?  0 :  - iSpeed;
+                xSpeed = xSpeed > 0 ? 0 : -iSpeed;
                 ySpeed = -iSpeed;
             }
-            else if((yPos + radius >= pad.getY() - 7.5F && yPos + radius <= pad.getY() + 7.5F) && (xPos + radius >= pad.getML() && xPos - radius <= pad.getMR()))
+            else if ((yPos + radius >= pad.getY() - pad.getHeight()/2 && yPos + radius <= pad.getY() + pad.getHeight()/2) && (xPos + radius >= pad.getML() && xPos - radius <= pad.getMR()))
             {//bounce
                 
-                ySpeed = -ySpeed;
+                ySpeed = -iSpeed;
             }
-            else if((yPos + radius >= pad.getY() - 7.5F && yPos + radius <= pad.getY() + 7.5F) && (xPos - radius > pad.getMR() && xPos - radius <= pad.getRR()))
+            else if((yPos + radius >= pad.getY() - pad.getHeight()/2 && yPos + radius <= pad.getY() + pad.getHeight()/2) && (xPos - radius > pad.getMR() && xPos - radius <= pad.getRR()))
             {//bounce back or up
                 xSpeed = xSpeed < 0 ? 0 : iSpeed;
                 ySpeed = -iSpeed;
@@ -73,23 +76,24 @@ namespace Pool_Game
         public bool checkBrickCollision(Brick b, float iSpeed, bool isAlive)//might need to make to string
         {
             if (isAlive == true)
-            {
+            {//brick top
+                
                 if (yPos + radius >= b.top && yPos + radius <= b.top + 5 && xPos >= b.left && xPos <= b.right)//first brick fucked. why
                 {
                     ySpeed = -iSpeed;
                     return true;
-                }
-                if (yPos - radius <= b.bot + 5 && yPos - radius >= b.bot && xPos >= b.left && xPos <= b.right)
+                }//brick bot
+                if (yPos - radius <= b.bot  && yPos - radius >= b.bot -5 && xPos >= b.left && xPos <= b.right)
                 {
                     ySpeed = iSpeed;
                     return true;
-                }
-                if (yPos >= b.top && yPos <= b.bot && xPos + radius >= b.left && xPos + radius <= b.left + 5)
+                }//brick left
+                if (yPos >= b.top - 2 && yPos <= b.bot + 2 && xPos + radius >= b.left && xPos + radius <= b.left + 5)
                 {
                     xSpeed = -iSpeed;
                     return true;
-                }
-                if (yPos >= b.top && yPos <= b.bot && xPos - radius >= b.right + 5 && xPos - radius <= b.left)
+                }//brick right
+                if (yPos >= b.top - 2 && yPos <= b.bot + 2 && xPos - radius >= b.right + 5 && xPos - radius <= b.left)
                 {
                     xSpeed = iSpeed;
                     return true;

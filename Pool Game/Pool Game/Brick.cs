@@ -11,9 +11,9 @@ namespace Pool_Game
         private float xPos, yPos, height, width;
         public bool isAlive;
         public float top, bot, left, right;
-        private String brickType;//kanskje int istedenfor?
+        public int brickType;
 
-        public Brick(float xPos, float yPos, float height,float width, String brickType, bool isAlive)
+        public Brick(float xPos, float yPos, float height,float width, int brickType, bool isAlive)
         {
             this.xPos = xPos;
             this.yPos = yPos;
