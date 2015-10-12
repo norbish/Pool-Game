@@ -130,12 +130,7 @@ namespace Pool_Game
                         numBricksDestroyed += 1;
                         score.Text = numBricksDestroyed.ToString();
                         //check bricktype and react accordingly
-                        if(Brickz[b].brickType == 1)
-                        {
-                            tempBrickNumber = b;
-                            tempBallNumber = f;
-                            DropNewBall(b, f);
-                        }
+                        
                         switch(Brickz[b].brickType)
                         {
                             case 1: tempBrickNumber = b; tempBallNumber = f; DropNewBall(b, f); break;// drop ball on destroyed brick
@@ -237,7 +232,7 @@ namespace Pool_Game
             {
                 if(!Ballz[count].inPlay)
                 {
-                    Ballz[count] = new Ball(Brickz[b].getX(), Brickz[b].getY(), Ballz[f].getXspeed() , Ballz[f].getYspeed(), radius, true);
+                    Ballz[count] = new Ball(Brickz[b].getX(),Brickz[b].getY(), Ballz[f].getXspeed() , Ballz[f].getYspeed(), radius, true);
                     numBallsActive += 1;
                     count = Ballz.Length;
                 }
