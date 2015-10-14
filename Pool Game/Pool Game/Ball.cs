@@ -133,56 +133,57 @@ namespace Pool_Game
             double collisionTangent = Math.Atan2((double)yDist, (double)xDist); //returns the angle of the tangent of the vector which is the collision x and y distance.
             double sin = Math.Sin(collisionTangent);
             double cos = Math.Cos(collisionTangent);
-            //rotate ball 0
-            double B0x = 0;
+            //rotate ball 0 pos
+            double B0x = 0;//relative x & y pos set
             double B0y = 0;
-            //rotate ball 1
-            double B1x = xDist * cos + yDist * sin;
+            //set ball 1 pos relative to ball 0, aka distance.
+            double B1x = xDist * cos + yDist * sin;//RELATIVE TO BALL 0!!!
             double B1y = yDist * cos - xDist * sin;
             //rotate ball 0 velocity
             double V0x = xSpeed * cos + ySpeed * sin;
             double V0y = ySpeed * cos - xSpeed * sin;
-
+            //rotate ball 1 velocity
             double V1x = otherBall.xSpeed * cos + otherBall.ySpeed * sin;
             double V1y = otherBall.ySpeed * cos - otherBall.xSpeed * sin;
 
-            //collision reaction
+            //collision reaction ELASTISK LIGNING I BOKA?, tror denne gjør at de ikke setter seg fast, må plusse på noe ekstra? eller ikke siden det er vel.
             double vxtotal = V0x - V1x;
-            V0x = ((mass - otherBall.getMass()) * V0x + 2 * otherBall.getMass() * V1x) / (mass + otherBall.getMass());
-            V1x = vxtotal + V0x;
-
+            V0x = ((mass - otherBall.getMass()) * V0x + 2 * otherBall.getMass() * V1x) / (mass + otherBall.getMass());//new velocity x ball 1
+            V1x = vxtotal + V0x; //new velocity x ball 2
+            //update position, THIS ONE IS RELATIVE TO MID BALL 0 and BALL 1
             B0x += V0x;
             B1x += V1x;
-            //rot pos
+            //rot pos back? SET NEW POSITION. BALLS SHOULD OVERLAP AFTER THIS.
             double B0newPosx = B0x * cos - B0y * sin;
             double B0newPosy = B0y * cos + B0x * sin;
 
             double B1newPosx = B1x * cos - B1y * sin;
             double B1newPosy = B1y * cos + B1x * sin;
 
-            //update pos
-            otherBall.xPos = xPos + (float)B1newPosx;
-            otherBall.yPos = yPos + (float)B1newPosy;
-            xPos = xPos + (float)B0newPosx;
-            yPos = yPos + (float)B0newPosy;
-
-            //rot vel
+            //rot vel back?
             double B0newVelx = V0x * cos - V0y * sin;
             double B0newVely = V0y * cos + V0x * sin;
 
             double B1newVelx = V1x * cos - V1y * sin;
             double B1newVely = V1y * cos + V1x * sin;
 
+            //update pos
+            otherBall.xPos = xPos + (float)B1newPosx;//is this just to set it out of the other balls radius?
+            otherBall.yPos = yPos + (float)B1newPosy;
+            xPos = xPos + (float)B0newPosx;//these 4 new positions will be a little "bigger" than when they entered. this is so that they wont stick. also, they point slightly away from each other.
+            yPos = yPos + (float)B0newPosy;
+            
+            //update vel
             xSpeed = (float)B0newVelx;
             ySpeed = (float)B0newVely;
             otherBall.setXspeed((float)B1newVelx);
             otherBall.setYspeed((float)B1newVely);
+            
 
 
 
-
-            //old velocity
-            /*double V0Ball1x = xSpeed * cos;
+           /* //old velocity
+            double V0Ball1x = xSpeed * cos;
             double V0Ball1y = ySpeed * sin;
             double V0Ball2x = otherBall.getXspeed() * cos;
             double V0Ball2y = otherBall.getYspeed() * sin;
@@ -200,8 +201,8 @@ namespace Pool_Game
             yPos += ySpeed *3;
             otherBall.setXspeed((float)V1Ball2x);
             otherBall.setYspeed((float)V1Ball2y);
-            otherBall.xPos += otherBall.xSpeed * otherBall.xSpeed;
-            otherBall.yPos += otherBall.ySpeed * otherBall.xSpeed;*/
+            otherBall.xPos += otherBall.xSpeed * 5;
+            otherBall.yPos += otherBall.ySpeed *5;*/
         }
 
 
