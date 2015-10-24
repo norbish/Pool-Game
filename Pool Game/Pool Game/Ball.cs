@@ -22,25 +22,35 @@ namespace Pool_Game
             xSpeed = xS;
             ySpeed = yS;
             radius = r;
-            this.inPlay = inPlay;
+            this.inPlay = inPlay;//check if ball is in use
         }
         //collision with wall and speeds
         public void UpdateVars(float TopWall, float BotWall,float LeftWall, float RightWall, float padPosy)//updates ball's position 
         {
-            xPos = xPos + xSpeed;
-            yPos = yPos + ySpeed;
+            xPos = xPos + xSpeed;//add friction here for pool game
+            yPos = yPos + ySpeed;//these update the balls position each frame, according to speed.
             if (xPos > RightWall -radius)//too far right
             {
                 xPos = RightWall - radius;
                 xSpeed = -xSpeed;
+                
             }
             if (yPos >= BotWall - radius )//too far down
             {
                 yPos = BotWall - radius;
-                ySpeed = 0; xSpeed = 5;
-                inPlay = false;
-                if (xSpeed <= 0)
+                ySpeed = 0;
+                //inPlay = false;
+                if (xPos >= RightWall - radius)
+                {
                     xSpeed = 0;
+                    inPlay = false;
+                }
+                else
+                {
+                    xSpeed = 5;
+                }
+                
+                
             }
             if (yPos <= TopWall +radius)//too far up
             {
@@ -54,7 +64,7 @@ namespace Pool_Game
             }
         }
         //check pad colliding with ball
-        public void checkPadCollision(Paddle pad, float iSpeed)//maybe not bool. maybe just void.
+        public void checkPadCollision(Paddle pad, float iSpeed)
         {                                 //ball in yAxis inside pad                                                              //ball in xAxis  between points
             if ((yPos + radius >= pad.getY() - pad.getHeight()/2 && yPos + radius <= pad.getY() + pad.getHeight()/2) && (xPos + radius >= pad.getLL() && xPos + radius < pad.getML()))//if left area
             {//bounce back or up(goes back if hit on the side because of xSpeed changed to 0, and next frame still in same "x" of area, so goes back.
@@ -62,8 +72,19 @@ namespace Pool_Game
                 ySpeed = -iSpeed;
             }
             else if ((yPos + radius >= pad.getY() - pad.getHeight()/2 && yPos + radius <= pad.getY() + pad.getHeight()/2) && (xPos + radius >= pad.getML() && xPos - radius <= pad.getMR()))
-            {//bounce
-                
+            {//bounce MIDDLE
+                if(xSpeed > 0)
+                {
+                    xSpeed = iSpeed;
+                }
+                else if(xSpeed <0)
+                {
+                    xSpeed = -iSpeed;//so that the speed gets reset when you hit the pad.
+                }
+                else if(xSpeed == 0)
+                {
+                    xSpeed = 0;
+                }
                 ySpeed = -iSpeed;
             }
             else if((yPos + radius >= pad.getY() - pad.getHeight()/2 && yPos + radius <= pad.getY() + pad.getHeight()/2) && (xPos - radius > pad.getMR() && xPos - radius <= pad.getRR()))
@@ -73,29 +94,32 @@ namespace Pool_Game
             }   
         }
         //brick collision
-        public bool checkBrickCollision(Brick b, float iSpeed, bool isAlive)//might need to make to string
-        {
+        public bool checkBrickCollision(Brick b, float iSpeed, bool isAlive)
+        {//2.1F is for accuracy, so the balls wont skip collision detection and venture into the brick.
             if (isAlive == true)
             {//brick top
-                
-                if (yPos + radius >= b.top && yPos + radius <= b.top + 5 && xPos >= b.left && xPos <= b.right)//first brick fucked. why
+                if (yPos + radius >= b.top && yPos + radius <= b.top + 2.1F && xPos >= b.left && xPos <= b.right)
                 {
-                    ySpeed = -iSpeed;
+                    ySpeed = -iSpeed;//so that we have constant speeds.
+                    yPos -= 2;
                     return true;
                 }//brick bot
-                if (yPos - radius <= b.bot  && yPos - radius >= b.bot -5 && xPos >= b.left && xPos <= b.right)
+                if (yPos - radius <= b.bot  && yPos - radius >= b.bot -2.1F && xPos >= b.left && xPos <= b.right)
                 {
                     ySpeed = iSpeed;
+                    yPos += 2;
                     return true;
                 }//brick left
-                if (yPos >= b.top - 2 && yPos <= b.bot + 2 && xPos + radius >= b.left && xPos + radius <= b.left + 5)
+                if (yPos + radius >= b.top && yPos - radius <= b.bot && xPos + radius >= b.left && xPos + radius <= b.left + 2.1F)
                 {
                     xSpeed = -iSpeed;
+                    xPos -= 2;
                     return true;
                 }//brick right
-                if (yPos >= b.top - 2 && yPos <= b.bot + 2 && xPos - radius >= b.right + 5 && xPos - radius <= b.left)
+                if (yPos + radius >= b.top && yPos - radius <= b.bot && xPos - radius >= b.right -2.1F  && xPos - radius <= b.right )
                 {
                     xSpeed = iSpeed;
+                    xPos += 2;
                     return true;
                 }
                 else
@@ -118,7 +142,7 @@ namespace Pool_Game
 
             float radDist = radius + otherBall.getRadius();
             
-            if (radDist * radDist >= (xDist * xDist + yDist * yDist)) //check if distance is bigger than the balls touching range
+            if (radDist * radDist >= (xDist * xDist + yDist * yDist) && inPlay == true && otherBall.inPlay == true) //check if distance is bigger than the balls touching range
             {
                 return true;
             }
@@ -172,12 +196,16 @@ namespace Pool_Game
             otherBall.yPos = yPos + (float)B1newPosy;
             xPos = xPos + (float)B0newPosx;//these 4 new positions will be a little "bigger" than when they entered. this is so that they wont stick. also, they point slightly away from each other.
             yPos = yPos + (float)B0newPosy;
-            
-            //update vel
-            xSpeed = (float)B0newVelx;
-            ySpeed = (float)B0newVely;
-            otherBall.setXspeed((float)B1newVelx);
-            otherBall.setYspeed((float)B1newVely);
+
+            //update vel - I WANT THEM TO HAVE PERMANENT SPEEDS if not, I can rearrange the code again.
+            xSpeed = (float)B0newVelx > 0 ? 2 : -2;
+            //xSpeed = (float)B0newVelx;
+            ySpeed = (float)B0newVely > 0 ? 2 : -2;
+            //ySpeed = (float)B0newVely;
+            otherBall.setXspeed((float)B1newVelx > 0 ? 2 : -2);
+            //otherBall.setXspeed((float)B1newVelx);
+            otherBall.setYspeed((float)B1newVely > 0 ? 2 : -2);
+            //otherBall.setYspeed((float)B1newVely);
             
 
 

@@ -16,7 +16,6 @@ namespace Pool_Game
         private float width;
         private float xPos, yPos;
         private float movespeed = 10;
-        private float leftWall, rightWall;
         private float height;
 
         public Paddle(float x, float y, float leftWall, float rightWall, float height)
